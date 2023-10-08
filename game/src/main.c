@@ -22,11 +22,11 @@ void node_circle_on_tick_0000(struct node_circle * node_circle);
 
 int circles_count;
 int circles_size;
-struct node_circle ** circles;
+struct node_circle * circles;
 
 int main(void)
 {
-    SetConfigFlags(FLAG_VSYNC_HINT);
+    //SetConfigFlags(FLAG_VSYNC_HINT);
     InitWindow(512, 512, "inheritance");
     SetTargetFPS(60);
     //ToggleBorderlessWindowed();
@@ -56,8 +56,8 @@ int main(void)
 void game_init(void)
 {
     circles_count = 0;
-    circles_size = 16;
-    circles = malloc(sizeof(struct node_circle *) * circles_size);
+    circles_size = 4096;
+    circles = malloc(sizeof(struct node_circle) * circles_size);
     assert(circles != NULL);
 
     for (int i = 0; i < circles_size; ++i)
@@ -73,7 +73,7 @@ void game_init(void)
         unsigned char color_b = GetRandomValue(0, 255);
         unsigned char color_a = 127;
         circles[i] = node_circle_create((char *)TextFormat("circle_%i", i), x, y, radius, color_r, color_g, color_b, color_a);
-        node_circle_register_callback_on_tick(circles[i], node_circle_on_tick_0000);
+        node_circle_register_callback_on_tick(&circles[i], node_circle_on_tick_0000);
         ++circles_count;
     }
 }
@@ -82,7 +82,7 @@ void game_free(void)
 {
     for (int i = 0; i < circles_count; ++i)
     {
-        node_circle_free(circles[i]);
+        node_circle_free(&circles[i]);
     }
 
     circles_count = 0;
@@ -95,7 +95,7 @@ void game_tick(void)
 {
     for (int i = 0; i < circles_count; ++i)
     {
-        tick_node_circle(circles[i]);
+        tick_node_circle(&circles[i]);
     }
 }
 
@@ -107,7 +107,7 @@ void game_draw(void)
 
     for (int i = 0; i < circles_count; ++i)
     {
-        draw_node_circle(circles[i]);
+        draw_node_circle(&circles[i]);
     }
 
     DrawRectangle(0, 0, 80, 16, BLACK);

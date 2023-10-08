@@ -7,7 +7,7 @@
 
 struct node_circle
 {
-    struct node_2d * base;
+    struct node_2d base;
 
     //
 
@@ -29,7 +29,7 @@ struct node_circle
 
     //
 
-    struct node_circle * (*fp_create)(char * name, float x, float y, float radius, unsigned char color_r, unsigned char color_g, unsigned char color_b, unsigned char color_a);
+    struct node_circle (*fp_create)(char * name, float x, float y, float radius, unsigned char color_r, unsigned char color_g, unsigned char color_b, unsigned char color_a);
     void(*fp_free)(struct node_circle * node_circle);
 
     //
@@ -65,7 +65,7 @@ struct node_circle
 
 //
 
-struct node_circle * node_circle_create(char * name, float x, float y, float radius, unsigned char color_r, unsigned char color_g, unsigned char color_b, unsigned char color_a);
+struct node_circle node_circle_create(char * name, float x, float y, float radius, unsigned char color_r, unsigned char color_g, unsigned char color_b, unsigned char color_a);
 void node_circle_free(struct node_circle * node_circle);
 
 //

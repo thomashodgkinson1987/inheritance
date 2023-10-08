@@ -7,7 +7,7 @@
 
 struct node_2d
 {
-    struct node * base;
+    struct node base;
 
     //
 
@@ -26,7 +26,7 @@ struct node_2d
 
     //
 
-    struct node_2d * (*fp_create)(char * name, float x, float y);
+    struct node_2d(*fp_create)(char * name, float x, float y);
     void(*fp_free)(struct node_2d * node_2d);
 
     //
@@ -45,7 +45,7 @@ struct node_2d
     void(*fp_set_y)(struct node_2d * node_2d, float y);
 };
 
-struct node_2d * node_2d_create(char * name, float x, float y);
+struct node_2d node_2d_create(char * name, float x, float y);
 void node_2d_free(struct node_2d * node2d);
 
 //

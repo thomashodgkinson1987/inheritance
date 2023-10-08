@@ -3,49 +3,48 @@
 #include <assert.h>
 #include <stdlib.h>
 
-struct node_2d * node_2d_create(char * name, float x, float y)
+struct node_2d node_2d_create(char * name, float x, float y)
 {
-    struct node_2d * node_2d = malloc(sizeof(struct node_2d));
-    assert(node_2d != NULL);
+    struct node_2d node_2d = (struct node_2d){ 0 };
 
     //
 
-    node_2d->base = node_create(name);
+    node_2d.base = node_create(name);
 
     //
 
-    node_2d->type = NODE_TYPES_NODE_2D;
+    node_2d.type = NODE_TYPES_NODE_2D;
 
     //
 
-    node_2d->on_tick = NULL;
+    node_2d.on_tick = NULL;
 
-    node_2d->fp_tick = node_2d_tick;
-
-    //
-
-    node_2d->x = x;
-    node_2d->y = y;
+    node_2d.fp_tick = node_2d_tick;
 
     //
 
-    node_2d->fp_create = node_2d_create;
-    node_2d->fp_free = node_2d_free;
+    node_2d.x = x;
+    node_2d.y = y;
 
     //
 
-    node_2d->fp_get_type = node_2d_get_type;
-    node_2d->fp_get_name = node_2d_get_name;
-
-    node_2d->fp_set_name = node_2d_set_name;
+    node_2d.fp_create = node_2d_create;
+    node_2d.fp_free = node_2d_free;
 
     //
 
-    node_2d->fp_get_x = node_2d_get_x;
-    node_2d->fp_get_y = node_2d_get_y;
+    node_2d.fp_get_type = node_2d_get_type;
+    node_2d.fp_get_name = node_2d_get_name;
 
-    node_2d->fp_set_x = node_2d_set_x;
-    node_2d->fp_set_y = node_2d_set_y;
+    node_2d.fp_set_name = node_2d_set_name;
+
+    //
+
+    node_2d.fp_get_x = node_2d_get_x;
+    node_2d.fp_get_y = node_2d_get_y;
+
+    node_2d.fp_set_x = node_2d_set_x;
+    node_2d.fp_set_y = node_2d_set_y;
 
     //
 
@@ -54,8 +53,7 @@ struct node_2d * node_2d_create(char * name, float x, float y)
 
 void node_2d_free(struct node_2d * node_2d)
 {
-    node_2d->base->fp_free(node_2d->base);
-    node_2d->base = NULL;
+    node_2d->base.fp_free(&node_2d->base);
 
     //
 
@@ -85,11 +83,6 @@ void node_2d_free(struct node_2d * node_2d)
 
     node_2d->fp_set_x = NULL;
     node_2d->fp_set_y = NULL;
-
-    //
-
-    free(node_2d);
-    node_2d = NULL;
 }
 
 //
@@ -101,7 +94,7 @@ void node_2d_register_callback_on_tick(struct node_2d * node_2d, void(*on_tick)(
 
 void node_2d_tick(struct node_2d * node_2d)
 {
-    node_2d->base->fp_tick(node_2d->base);
+    node_2d->base.fp_tick(&node_2d->base);
 
     if (node_2d->on_tick != NULL)
     {
@@ -118,14 +111,14 @@ enum node_type node_2d_get_type(struct node_2d * node_2d)
 
 char * node_2d_get_name(struct node_2d * node_2d)
 {
-    return node_2d->base->fp_get_name(node_2d->base);
+    return node_2d->base.fp_get_name(&node_2d->base);
 }
 
 
 
 void node_2d_set_name(struct node_2d * node_2d, char * name)
 {
-    node_2d->base->fp_set_name(node_2d->base, name);
+    node_2d->base.fp_set_name(&node_2d->base, name);
 }
 
 //

@@ -4,36 +4,35 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct node * node_create(char * name)
+struct node node_create(char * name)
 {
-    struct node * node = malloc(sizeof(struct node));
-    assert(node != NULL);
+    struct node node = (struct node){ 0 };
 
     //
 
-    node->type = NODE_TYPES_NODE;
+    node.type = NODE_TYPES_NODE;
 
-    node->name = malloc(strlen(name) + 1);
-    assert(node->name != NULL);
-    strcpy(node->name, name);
-
-    //
-
-    node->on_tick = NULL;
-
-    node->fp_tick = node_tick;
+    node.name = malloc(strlen(name) + 1);
+    assert(node.name != NULL);
+    strcpy(node.name, name);
 
     //
 
-    node->fp_create = node_create;
-    node->fp_free = node_free;
+    node.on_tick = NULL;
+
+    node.fp_tick = node_tick;
 
     //
 
-    node->fp_get_type = node_get_type;
-    node->fp_get_name = node_get_name;
+    node.fp_create = node_create;
+    node.fp_free = node_free;
 
-    node->fp_set_name = node_set_name;
+    //
+
+    node.fp_get_type = node_get_type;
+    node.fp_get_name = node_get_name;
+
+    node.fp_set_name = node_set_name;
 
     //
 
@@ -45,8 +44,6 @@ void node_free(struct node * node)
     node->type = 0;
     free(node->name);
     node->name = NULL;
-    free(node);
-    node = NULL;
 }
 
 //

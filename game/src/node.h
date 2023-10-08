@@ -16,7 +16,7 @@ struct node
 
     //
 
-    struct node * (*fp_create)(char * name);
+    struct node(*fp_create)(char * name);
     void(*fp_free)(struct node * node);
 
     //
@@ -27,7 +27,7 @@ struct node
     void(*fp_set_name)(struct node * node, char * name);
 };
 
-struct node * node_create(char * name);
+struct node node_create(char * name);
 void node_free(struct node * node);
 
 //
