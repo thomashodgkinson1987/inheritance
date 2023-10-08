@@ -28,6 +28,12 @@ struct node_circle * node_circle_create(char * name, float x, float y, float rad
 
     //
 
+    node_circle->on_tick = NULL;
+
+    node_circle->fp_tick = node_circle_tick;
+
+    //
+
     node_circle->fp_create = node_circle_create;
     node_circle->fp_free = node_circle_free;
 
@@ -122,6 +128,23 @@ void node_circle_free(struct node_circle * node_circle)
 
     free(node_circle);
     node_circle = NULL;
+}
+
+//
+
+void node_circle_register_callback_on_tick(struct node_circle * node_circle, void(*on_tick)(struct node_circle * node_circle))
+{
+    node_circle->on_tick = on_tick;
+}
+
+void node_circle_tick(struct node_circle * node_circle)
+{
+    node_circle->base->fp_tick(node_circle->base);
+
+    if (node_circle->on_tick != NULL)
+    {
+        node_circle->on_tick(node_circle);
+    }
 }
 
 //

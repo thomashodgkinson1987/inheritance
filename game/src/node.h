@@ -10,6 +10,12 @@ struct node
 
     //
 
+    void(*on_tick)(struct node * node);
+
+    void(*fp_tick)(struct node * node);
+
+    //
+
     struct node * (*fp_create)(char * name);
     void(*fp_free)(struct node * node);
 
@@ -23,6 +29,12 @@ struct node
 
 struct node * node_create(char * name);
 void node_free(struct node * node);
+
+//
+
+void node_register_callback_on_tick(struct node * node, void(*on_tick)(struct node * node));
+
+void node_tick(struct node * node);
 
 //
 

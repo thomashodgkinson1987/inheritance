@@ -8,41 +8,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void node_on_tick_0000(struct node * node);
+void node_2d_on_tick_0000(struct node_2d * node_2d);
+void node_circle_on_tick_0000(struct node_circle * node_circle);
+
 int main(void)
 {
-    int nodes_count = 0;
-    int nodes_size = 8;
-    struct node ** nodes = malloc(sizeof(struct node *) * nodes_size);
-    assert(nodes != NULL);
+    struct node_circle * node_circle = node_circle_create("circle", 256, 256, 8, 0, 255, 0, 255);
 
-    for (int i = 0; i < nodes_size; ++i)
-    {
-        nodes[i] = node_create(TextFormat("node_%i", i));
-        ++nodes_count;
-    }
+    node_register_callback_on_tick(node_circle->base->base, node_on_tick_0000);
+    node_2d_register_callback_on_tick(node_circle->base, node_2d_on_tick_0000);
+    node_circle_register_callback_on_tick(node_circle, node_circle_on_tick_0000);
 
-    for (int i = 0; i < nodes_count; ++i)
-    {
-        struct node * node = nodes[i];
-        printf("%s\n", node_get_name(node));
-    }
+    node_circle_tick(node_circle);
 
-    /*for (int i = 0; i < nodes_count; ++i)
-    {
-        struct node * node = nodes[i];
-        node_tick(node);
-    }*/
-
-    for (int i = 0; i < nodes_count; ++i)
-    {
-        struct node * node = nodes[i];
-        node_free(node);
-    }
-
-    nodes_count = 0;
-    nodes_size = 0;
-    free(nodes);
-    nodes = NULL;
+    node_circle_free(node_circle);
 
     exit(EXIT_SUCCESS);
 
@@ -61,4 +41,19 @@ int main(void)
     CloseWindow();
 
     return 0;
+}
+
+void node_on_tick_0000(struct node * node)
+{
+    printf("node_on_tick_0000 called by %s\n", node_get_name(node));
+}
+
+void node_2d_on_tick_0000(struct node_2d * node_2d)
+{
+    printf("node_2d_on_tick_0000 called by %s\n", node_2d_get_name(node_2d));
+}
+
+void node_circle_on_tick_0000(struct node_circle * node_circle)
+{
+    printf("node_circle_on_tick_0000 called by %s\n", node_circle_get_name(node_circle));
 }

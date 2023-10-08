@@ -19,6 +19,12 @@ struct node * node_create(char * name)
 
     //
 
+    node->on_tick = NULL;
+
+    node->fp_tick = node_tick;
+
+    //
+
     node->fp_create = node_create;
     node->fp_free = node_free;
 
@@ -41,6 +47,21 @@ void node_free(struct node * node)
     node->name = NULL;
     free(node);
     node = NULL;
+}
+
+//
+
+void node_register_callback_on_tick(struct node * node, void(*on_tick)(struct node * node))
+{
+    node->on_tick = on_tick;
+}
+
+void node_tick(struct node * node)
+{
+    if (node->on_tick != NULL)
+    {
+        node->on_tick(node);
+    }
 }
 
 //

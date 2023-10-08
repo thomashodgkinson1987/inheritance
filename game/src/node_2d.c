@@ -18,6 +18,12 @@ struct node_2d * node_2d_create(char * name, float x, float y)
 
     //
 
+    node_2d->on_tick = NULL;
+
+    node_2d->fp_tick = node_2d_tick;
+
+    //
+
     node_2d->x = x;
     node_2d->y = y;
 
@@ -84,6 +90,23 @@ void node_2d_free(struct node_2d * node_2d)
 
     free(node_2d);
     node_2d = NULL;
+}
+
+//
+
+void node_2d_register_callback_on_tick(struct node_2d * node_2d, void(*on_tick)(struct node_2d * node_2d))
+{
+    node_2d->on_tick = on_tick;
+}
+
+void node_2d_tick(struct node_2d * node_2d)
+{
+    node_2d->base->fp_tick(node_2d->base);
+
+    if (node_2d->on_tick != NULL)
+    {
+        node_2d->on_tick(node_2d);
+    }
 }
 
 //

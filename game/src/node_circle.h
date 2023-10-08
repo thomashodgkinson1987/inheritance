@@ -9,13 +9,23 @@ struct node_circle
 {
     struct node_2d * base;
 
+    //
+
     enum node_type type;
+
+    //
 
     float radius;
     unsigned char color_r;
     unsigned char color_g;
     unsigned char color_b;
     unsigned char color_a;
+
+    //
+
+    void(*on_tick)(struct node_circle * node_circle);
+
+    void(*fp_tick)(struct node_circle * node_circle);
 
     //
 
@@ -57,6 +67,12 @@ struct node_circle
 
 struct node_circle * node_circle_create(char * name, float x, float y, float radius, unsigned char color_r, unsigned char color_g, unsigned char color_b, unsigned char color_a);
 void node_circle_free(struct node_circle * node_circle);
+
+//
+
+void node_circle_register_callback_on_tick(struct node_circle * node_circle, void(*on_tick)(struct node_circle * node_circle));
+
+void node_circle_tick(struct node_circle * node_circle);
 
 //
 
