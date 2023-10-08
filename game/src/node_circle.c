@@ -1,7 +1,5 @@
 #include "node_circle.h"
 
-#include "node_2d.h"
-
 #include <assert.h>
 #include <stdlib.h>
 
