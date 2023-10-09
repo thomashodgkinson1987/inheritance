@@ -1,6 +1,7 @@
 #include "node.h"
 #include "node_2d.h"
 #include "node_circle.h"
+#include "node_sprite.h"
 
 #include "raylib.h"
 
@@ -15,18 +16,20 @@ void game_free(void);
 void game_tick(void);
 void game_draw(void);
 
-void tick_node_circle(struct node_circle * node_circle);
-void draw_node_circle(struct node_circle * node_circle);
+void tick_node_sprite(struct node_sprite * node_sprite);
+void draw_node_sprite(struct node_sprite * node_sprite);
 
-void node_circle_on_tick_0000(struct node_circle * node_circle);
+void node_sprite_on_tick_0000(struct node_sprite * node_sprite);
 
-int circles_count;
-int circles_size;
-struct node_circle * circles;
+int sprites_count;
+int sprites_size;
+struct node_sprite * sprites;
+
+Texture2D texture;
 
 int main(void)
 {
-    //SetConfigFlags(FLAG_VSYNC_HINT);
+    SetConfigFlags(FLAG_VSYNC_HINT);
     InitWindow(512, 512, "inheritance");
     SetTargetFPS(60);
     //ToggleBorderlessWindowed();
@@ -55,47 +58,49 @@ int main(void)
 
 void game_init(void)
 {
-    circles_count = 0;
-    circles_size = 4096;
-    circles = malloc(sizeof(struct node_circle) * circles_size);
-    assert(circles != NULL);
+    sprites_count = 0;
+    sprites_size = 1024 * 8;
+    sprites = malloc(sizeof(struct node_sprite) * sprites_size);
+    assert(sprites != NULL);
 
-    for (int i = 0; i < circles_size; ++i)
+    texture = LoadTexture("resources/texture.png");
+
+    for (int i = 0; i < sprites_size; ++i)
     {
         float x = (float)GetRandomValue(0, GetScreenWidth());
         float y = (float)GetRandomValue(0, GetScreenHeight());
-        float radius = 16.0f + GetRandomValue(0, 48);
-        /*unsigned char color_r = 255;
-        unsigned char color_g = 255;
-        unsigned char color_b = 255;*/
-        unsigned char color_r = GetRandomValue(0, 255);
-        unsigned char color_g = GetRandomValue(0, 255);
-        unsigned char color_b = GetRandomValue(0, 255);
-        unsigned char color_a = 127;
-        circles[i] = node_circle_create((char *)TextFormat("circle_%i", i), x, y, radius, color_r, color_g, color_b, color_a);
-        node_circle_register_callback_on_tick(&circles[i], node_circle_on_tick_0000);
-        ++circles_count;
+
+        sprites[i] = node_sprite_create((char *)TextFormat("sprite_%i", i), x, y, texture);
+
+        Color tint = (Color){ GetRandomValue(0, 255), GetRandomValue(0, 255), GetRandomValue(0, 255), 127 };
+        node_sprite_set_tint(&sprites[i], tint);
+
+        node_sprite_register_callback_on_tick(&sprites[i], node_sprite_on_tick_0000);
+
+        ++sprites_count;
     }
 }
 
 void game_free(void)
 {
-    for (int i = 0; i < circles_count; ++i)
+    for (int i = 0; i < sprites_count; ++i)
     {
-        node_circle_free(&circles[i]);
+        node_sprite_free(&sprites[i]);
     }
 
-    circles_count = 0;
-    circles_size = 0;
-    free(circles);
-    circles = NULL;
+    sprites_count = 0;
+    sprites_size = 0;
+    free(sprites);
+    sprites = NULL;
+
+    UnloadTexture(texture);
 }
 
 void game_tick(void)
 {
-    for (int i = 0; i < circles_count; ++i)
+    for (int i = 0; i < sprites_count; ++i)
     {
-        tick_node_circle(&circles[i]);
+        tick_node_sprite(&sprites[i]);
     }
 }
 
@@ -105,50 +110,47 @@ void game_draw(void)
 
     ClearBackground(BLACK);
 
-    for (int i = 0; i < circles_count; ++i)
+    for (int i = 0; i < sprites_count; ++i)
     {
-        draw_node_circle(&circles[i]);
+        draw_node_sprite(&sprites[i]);
     }
 
-    DrawRectangle(0, 0, 80, 16, BLACK);
+    DrawRectangle(0, 0, 74, 20, BLACK);
     DrawFPS(0, 0);
 
     EndDrawing();
 }
 
-void tick_node_circle(struct node_circle * node_circle)
+void tick_node_sprite(struct node_sprite * node_sprite)
 {
-    node_circle_tick(node_circle);
+    node_sprite_tick(node_sprite);
 }
 
-void draw_node_circle(struct node_circle * node_circle)
+void draw_node_sprite(struct node_sprite * node_sprite)
 {
-    int x = (int)node_circle_get_x(node_circle);
-    int y = (int)node_circle_get_y(node_circle);
-    float radius = node_circle_get_radius(node_circle);
-    unsigned char color_r = node_circle_get_color_r(node_circle);
-    unsigned char color_g = node_circle_get_color_g(node_circle);
-    unsigned char color_b = node_circle_get_color_b(node_circle);
-    unsigned char color_a = node_circle_get_color_a(node_circle);
+    Texture texture = node_sprite_get_texture(node_sprite);
+    Rectangle source = node_sprite_get_source(node_sprite);
+    Rectangle dest = node_sprite_get_dest(node_sprite);
+    Vector2 origin = node_sprite_get_origin(node_sprite);
+    float rotation = node_sprite_get_rotation(node_sprite);
+    Color tint = node_sprite_get_tint(node_sprite);
 
-    Color color = (Color){ color_r, color_g, color_b, color_a };
-
-    DrawCircle(x, y, radius, color);
+    DrawTexturePro(texture, source, dest, origin, rotation, tint);
 }
 
-void node_circle_on_tick_0000(struct node_circle * node_circle)
+void node_sprite_on_tick_0000(struct node_sprite * node_sprite)
 {
-    float x = node_circle_get_x(node_circle) + GetRandomValue(-4, 4);
-    float y = node_circle_get_y(node_circle) + GetRandomValue(-4, 4);
+    float x = node_sprite_get_x(node_sprite) + GetRandomValue(-4, 4);
+    float y = node_sprite_get_y(node_sprite) + GetRandomValue(-4, 4);
 
-    float min_x = node_circle_get_radius(node_circle);
-    float min_y = node_circle_get_radius(node_circle);
-    float max_x = GetScreenWidth() - node_circle_get_radius(node_circle);
-    float max_y = GetScreenHeight() - node_circle_get_radius(node_circle);
+    float min_x = 0.0f;
+    float min_y = 0.0f;
+    float max_x = GetScreenWidth() - node_sprite_get_dest(node_sprite).width;
+    float max_y = GetScreenHeight() - node_sprite_get_dest(node_sprite).height;
 
     x = x < min_x ? min_x : x > max_x ? max_x : x;
     y = y < min_y ? min_y : y > max_y ? max_y : y;
 
-    node_circle_set_x(node_circle, x);
-    node_circle_set_y(node_circle, y);
+    node_sprite_set_x(node_sprite, x);
+    node_sprite_set_y(node_sprite, y);
 }

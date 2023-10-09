@@ -34,7 +34,7 @@ struct node_circle
 
     //
 
-    enum node_type(*fp_get_node_type)(struct node_circle * node_circle);
+    enum node_type(*fp_get_type)(struct node_circle * node_circle);
     char * (*fp_get_name)(struct node_circle * node_circle);
 
     void(*fp_set_name)(struct node_circle * node_circle, char * name);

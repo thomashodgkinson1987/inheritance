@@ -36,7 +36,7 @@ struct node_circle node_circle_create(char * name, float x, float y, float radiu
 
     //
 
-    node_circle.fp_get_node_type = node_circle_get_type;
+    node_circle.fp_get_type = node_circle_get_type;
     node_circle.fp_get_name = node_circle_get_name;
 
     node_circle.fp_set_name = node_circle_set_name;
@@ -92,7 +92,7 @@ void node_circle_free(struct node_circle * node_circle)
 
     //
 
-    node_circle->fp_get_node_type = NULL;
+    node_circle->fp_get_type = NULL;
     node_circle->fp_get_name = NULL;
 
     node_circle->fp_set_name = NULL;
