@@ -59,7 +59,7 @@ int main(void)
 void game_init(void)
 {
     sprites_count = 0;
-    sprites_size = 1024 * 8;
+    sprites_size = 8;
     sprites = malloc(sizeof(struct node_sprite) * sprites_size);
     assert(sprites != NULL);
 
@@ -74,6 +74,9 @@ void game_init(void)
 
         Color tint = (Color){ GetRandomValue(0, 255), GetRandomValue(0, 255), GetRandomValue(0, 255), 127 };
         node_sprite_set_tint(&sprites[i], tint);
+
+        Vector2 origin = (Vector2){ (float)texture.width / 2, (float)texture.height / 2 };
+        node_sprite_set_origin(&sprites[i], origin);
 
         node_sprite_register_callback_on_tick(&sprites[i], node_sprite_on_tick_0000);
 
@@ -142,6 +145,7 @@ void node_sprite_on_tick_0000(struct node_sprite * node_sprite)
 {
     float x = node_sprite_get_x(node_sprite) + GetRandomValue(-4, 4);
     float y = node_sprite_get_y(node_sprite) + GetRandomValue(-4, 4);
+    float rotation = node_sprite_get_rotation(node_sprite) + 1.0f;
 
     float min_x = 0.0f;
     float min_y = 0.0f;
@@ -151,6 +155,9 @@ void node_sprite_on_tick_0000(struct node_sprite * node_sprite)
     x = x < min_x ? min_x : x > max_x ? max_x : x;
     y = y < min_y ? min_y : y > max_y ? max_y : y;
 
+    if (rotation > 360.0f) rotation -= 360.0f;
+
     node_sprite_set_x(node_sprite, x);
     node_sprite_set_y(node_sprite, y);
+    node_sprite_set_rotation(node_sprite, rotation);
 }
